@@ -10,11 +10,11 @@ module.exports = function(css) {
   console.log('Properties: ' + JSON.stringify(properties));
 
   // 2. Calculate the ratio used
-  var ratio = calculateRatio(properties);
-  var base = calculateBase(ratio, properties);
+  var ratio = calculateRatio(properties['font-size']);
+  var base = calculateBase(ratio, properties['font-size']);
 
   // 3. Use the ratio and base to identify any outliers
-  var outliers = identifyOutliers(ratio, base, properties);
+  var outliers = identifyOutliers(ratio, base, properties['font-size']);
 
   console.log('Ratio is ' + ratio);
   console.log('Base is ' + base);
@@ -60,7 +60,6 @@ function normaliseDeclaration(decl) {
 }
 
 function calculateRatio(xs) {
-  return;
 
   // Needs to be a lot better than this...
   var last = null;
@@ -73,14 +72,27 @@ function calculateRatio(xs) {
     last = current;
     return ratio;
   });
-  
+  return 1.5; 
   return ratios;
 }
 
 function calculateBase(ratio, props) {
-  // TODO
+  return 1;
 }
 
 function identifyOutliers(ratio, base, props) {
-  // TODO
+  return props.filter(val => {
+
+    var multiplier = val;
+
+    // Continually divide by the ratio until you reach 1
+    while(multiplier > 0.9) {
+      multiplier = multiplier / ratio;
+    }
+    console.log(multiplier*ratio);
+
+    // Filter out all values that fit the scale (allowing for some error)
+    return Math.abs(multiplier*ratio - 1) > 0.05;
+  });
 }
+
