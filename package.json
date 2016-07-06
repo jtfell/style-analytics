@@ -1,5 +1,5 @@
 {
-  "name": "style-police",
+  "name": "style-analytics",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jtfell/style-police.git"
+    "url": "git+https://github.com/jtfell/style-analytics.git"
   },
   "author": "Julian Fell",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jtfell/style-police/issues"
+    "url": "https://github.com/jtfell/style-analytics/issues"
   },
-  "homepage": "https://github.com/jtfell/style-police#readme",
+  "homepage": "https://github.com/jtfell/style-analytics#readme",
   "devDependencies": {
     "postcss": "^5.0.21"
   }
