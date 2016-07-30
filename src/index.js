@@ -1,23 +1,21 @@
 var postcss = require('postcss');
 var utils = require('./utils');
+var regression = require('./regression');
 
 module.exports = function(css) {
   var root = postcss.parse(css);
 
-  // 1. Parse the AST and combine like properties
-  //    eg (margin, margin-top and margin-bottom)
+  // Parse the AST and combine like properties
   var properties = combineLikeProperties(root);
   console.log('Properties: ' + JSON.stringify(properties));
 
-  // 2. Calculate the ratio used
+  // Calculate the ratio used
   var ratio = calculateRatio(properties['font-size']);
-  var base = calculateBase(ratio, properties['font-size']);
 
-  // 3. Use the ratio and base to identify any outliers
-  var outliers = identifyOutliers(ratio, base, properties['font-size']);
+  // Use the ratio and base to identify any outliers
+  var outliers = identifyOutliers(ratio, properties['font-size']);
 
   console.log('Ratio is ' + ratio);
-  console.log('Base is ' + base);
   console.log('Outliers: ' + outliers);
 };
 
@@ -29,7 +27,7 @@ function combineLikeProperties(root) {
   root.walkDecls(function(decl) {
     
     // Normalise the declaration and add each sub declaration to the map
-    normaliseDeclaration(decl).forEach(decl => {
+    normaliseDeclaration(decl).forEach(function(decl) {
       utils.addToMap(combinedDecls, decl.prop, utils.convertToEm(decl.value));
     });
   });
@@ -60,28 +58,11 @@ function normaliseDeclaration(decl) {
 }
 
 function calculateRatio(xs) {
-
-  // Needs to be a lot better than this...
-  var last = null;
-  var ratios = xs.sort().map(function(current) {
-    if (last === null) {
-      last = current;
-      return 0;
-    }
-    var ratio = (current / last);
-    last = current;
-    return ratio;
-  });
-  return 1.5; 
-  return ratios;
+  return regression(xs.sort());
 }
 
-function calculateBase(ratio, props) {
-  return 1;
-}
-
-function identifyOutliers(ratio, base, props) {
-  return props.filter(val => {
+function identifyOutliers(ratio, props) {
+  return props.filter(function (val) {
 
     var multiplier = val;
 
@@ -89,7 +70,6 @@ function identifyOutliers(ratio, base, props) {
     while(multiplier > 0.9) {
       multiplier = multiplier / ratio;
     }
-    console.log(multiplier*ratio);
 
     // Filter out all values that fit the scale (allowing for some error)
     return Math.abs(multiplier*ratio - 1) > 0.05;
