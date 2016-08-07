@@ -12,6 +12,7 @@ module.exports.convertToEm = function (value, rootFontSize) {
     return pixels/rootFontSize;
   }
   console.log('Skipping: ', value);
+  return null;
 }
 
 module.exports.addToMap = function (map, key, value) {

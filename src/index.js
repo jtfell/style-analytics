@@ -7,28 +7,24 @@ module.exports = function(css) {
 
   // Parse the AST and combine like properties
   var properties = combineLikeProperties(root);
-  console.log('Properties: ' + JSON.stringify(properties));
 
   // Calculate the ratio used
-  var ratio = calculateRatio(properties['font-size']);
+  var results = calculateRatio(properties['font-size']);
 
-  // Use the ratio and base to identify any outliers
-  var outliers = identifyOutliers(ratio, properties['font-size']);
-
-  console.log('Ratio is ' + ratio);
-  console.log('Outliers: ' + outliers);
+  return results;
 };
 
 function combineLikeProperties(root) {
   // Initialise a map from property => list of values
   var combinedDecls = {};
-
-  // Iterate over every declaration
   root.walkDecls(function(decl) {
     
     // Normalise the declaration and add each sub declaration to the map
     normaliseDeclaration(decl).forEach(function(decl) {
-      utils.addToMap(combinedDecls, decl.prop, utils.convertToEm(decl.value));
+      var number = utils.convertToEm(decl.value);
+      if (number !== null) {
+        utils.addToMap(combinedDecls, decl.prop, utils.convertToEm(decl.value));
+      }
     });
   });
 
@@ -57,22 +53,18 @@ function normaliseDeclaration(decl) {
   return [];
 }
 
+/**
+ * Perform exponential regression on the values in the list
+ **/
 function calculateRatio(xs) {
-  return regression(xs.sort());
+  var uniqueSizes = xs.sort().filter(onlyUnique);
+  return regression(uniqueSizes);
 }
 
-function identifyOutliers(ratio, props) {
-  return props.filter(function (val) {
-
-    var multiplier = val;
-
-    // Continually divide by the ratio until you reach 1
-    while(multiplier > 0.9) {
-      multiplier = multiplier / ratio;
-    }
-
-    // Filter out all values that fit the scale (allowing for some error)
-    return Math.abs(multiplier*ratio - 1) > 0.05;
-  });
+/**
+ * Function for filtering out non-unique values in a list
+ **/
+function onlyUnique(value, index, self) { 
+  return self.indexOf(value) === index;
 }
 

@@ -37,8 +37,11 @@ function exponentialRegression(dataPoints) {
   dataPoints = dataPoints.map(Math.log10);
   var res = linearRegression(dataPoints);
   var ratio = Math.pow(10, res.m);
-
-  return ratio;
+  
+  return {
+    ratio: ratio,
+    fit: res.r
+  };
 }
 
 module.exports = exponentialRegression;
