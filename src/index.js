@@ -65,6 +65,6 @@ function calculateRatio(xs) {
  * Function for filtering out non-unique values in a list
  **/
 function onlyUnique(value, index, self) { 
-  return self.indexOf(value) === index;
+  return self.indexOf(value) === index && value !== 0;
 }
 

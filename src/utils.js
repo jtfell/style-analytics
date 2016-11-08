@@ -11,7 +11,6 @@ module.exports.convertToEm = function (value, rootFontSize) {
     var pixels = parseFloat(value.slice(0, -2));
     return pixels/rootFontSize;
   }
-  console.log('Skipping: ', value);
   return null;
 }
 
